@@ -2,6 +2,8 @@
 
 ## Objective-C Coding Style Reference of Wangxin iOS Team
 
+> Writing Objective-C code is like writing prose.
+
 1. 缩进和代码块大小
 	* 代码缩进
 	* 单行代码的宽度
@@ -11,10 +13,16 @@
 	* 注释的格式
 	* 什么时候要注释
 3. 空格
-	* 哪些情况需要加空格
+	* 一段示例代码
+	* 需要和无需空格的地方
 4. 花括号的风格
 	* 三种基本风格
 5. 命名
+	* 文件命名
+	* 类的命名
+	* 方法命名
+	* 变量命名
+	* 缩写命名
 6. to add
 
 ## 缩进和长度
@@ -57,7 +65,49 @@
 
 ### 在单个函数中适当换行（`Required`）
 
-大部分情况下，一个函数体内可能做了几件更小的任务单元。在这些不同的小单元之间，应该使用空行来进行恰当的分隔，从而提高代码的阅读体验。*这里需要注意的是划分的准确性。*<br/>
+大部分情况下，一个函数体内可能做了几件更小的任务单元。在这些不同的小单元之间，应该使用空行来进行恰当的分隔，从而提高代码的阅读体验。*这里需要注意的是划分的准确性*。<br/>
+
+除了函数，在其它需要的地方（比如类的接口定义）也要适当换行，如下是一段摘自工程里的代码：
+
+```
+@property (retain, nonatomic) IBOutlet UIView * tableHeadView;
+@property (retain, nonatomic) IBOutlet UIView * noDataView;
+@property (retain, nonatomic) IBOutlet UILabel  * badgeLabel;
+@property (assign, nonatomic) BOOL bHasLogout;
+@property (assign, nonatomic) BOOL bHasInsert;
+@property (assign, nonatomic) BOOL bHasDelete;
+
+- (id)initWithQuery:(NSString*)path query:(NSDictionary*)query;
+
+- (IBAction)pressAvatar:(id)sender event:(id)event;
+- (IBAction)pressGotoFriendTab:(id)sender;
+- (void)onReachabilityChanged:(NSNotification *)note;
+
+@end
+```
+
+开头的是6行属性声明，可以分为两类；最下面的3个接口中，前两个是响应用户点击动作，与第3个也不属于同一类，所以应该添加两行空行：
+
+```
+@property (retain, nonatomic) IBOutlet UIView * tableHeadView;
+@property (retain, nonatomic) IBOutlet UIView * noDataView;
+@property (retain, nonatomic) IBOutlet UILabel  * badgeLabel;
+
+@property (assign, nonatomic) BOOL bHasLogout;
+@property (assign, nonatomic) BOOL bHasInsert;
+@property (assign, nonatomic) BOOL bHasDelete;
+
+- (id)initWithQuery:(NSString*)path query:(NSDictionary*)query;
+
+- (IBAction)pressAvatar:(id)sender event:(id)event;
+- (IBAction)pressGotoFriendTab:(id)sender;
+
+- (void)onReachabilityChanged:(NSNotification *)note;
+
+@end
+```
+
+此外，还有两点需要注意：一是析构函数dealloc中成员变量的释放顺序应该和接口定义中的声明顺序保持一致以便于检查（`Required`）；二是`onReachabilityChanged`方法从命名上看，是监听消息进行响应的，不应该作为接口暴露（`Required`）。
 
 ## 注释
 
@@ -73,9 +123,9 @@
 
 ## 空格
 
-### 哪些情况需要加空格
+### 一段示例代码
 
-需要使用空格来提高代码阅读体验的地方可能一下子枚举不完，就先通过一段旺信工程里的代码有个认知：
+需要使用空格来提高代码阅读体验的地方可能一下子枚举不完，不妨先通过旺信工程里的一段代码来建立初步认知：
 
 ```
 //记录历史登录记录用户的token
@@ -90,7 +140,7 @@
 }
 ```
 
-然后对上面的代码稍作调整：
+上面的代码显得有点紧凑，风格上也稍显凌乱，对其稍作调整：
 
 ```
 // 记录历史登录记录用户的|token|   /* 修改点1 */
@@ -121,7 +171,7 @@
 可以看出有如下几个修改点：
 
 1. 修改点1：注释双斜杠后空一格；关键变量名token用竖线|符号突出。
-2. 修改点2：指针类型的 *星号 和具体类型之间用空格隔开；同时，方法名开头的+-号后面要空格。
+2. 修改点2：指针类型的 *星号 和具体类型之间用空格隔开；同时，方法名开头的+/-号后面要空格。
 3. 修改点3：指针类型变量，*星号后接变量名，无需空格；同时，变量尽量初始化。
 4. 修改点4：不要在函数调用处直接使用函数返回值作为参数，不利于调试；同时，命名时尽量采用全称。
 5. 修改点5：一个函数体内适当用空行分隔，提高可读性；函数调用太长时，换行对齐。
@@ -130,7 +180,59 @@
 8. 修改点8：算术/逻辑运算符与左右两边的运算参数之间要有空格。
 9. 修改点9：用逗号分隔参数时，逗号与下一个参数之间要有空格；前后两个参数和两端花括号之间无需空格。
 
-## 花括号的风格
+### 需要和无需空格的地方
+
+* 方法类型+/-后要空格；方法返回值类型和方法名之间无需空格；
+* 指针类型，类型和星号之间要空格；星号和变量名之间无需空格；
+* 变量赋值，等号两边要空格；
+
+下面相应的3行示例代码（摘自苹果官方）。
+
+```
++ (id)arrayWithArray:(NSArray *)array;
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+
+NSError *error = nil;
+```
+
+* 注释符号（斜线或星号）和注释正文之间要有空格；
+
+```
+// default is UIBarStyleDefault (blue)
+
+/* Methods for manipulating text. */
+
+/**
+	使用用户名和密码进行登录。
+	@param username 用户名
+	@param pwd 密码
+ */
+```
+
+* 运算符和运算参数之间要有空格，比如条件判断语句；
+* 关键字与其它字符之间要有空格，比如if、while等关键字和后续字符之间；
+* 函数参数之间要有空格，比如常见的；
+
+```
+BOOL flag = (param0 && param1) || (param2 && param3);
+
+@property (assign, nonatomic) BOOL flag;
+
+if (title.length > 0) {
+	// Use the title.
+}
+
+NSString *str = [NSString stringWithFormat:@"Use the %@", title];
+
+NSDictionary *dict0 = @{@"key" : @"value", @"key1" : @"value1"};
+
+NSDictionary *dict1 = [NSDictionary dictionaryWithObjectsAndKeys:@"obj", @"key", nil];
+```
+
+* 其它觉得需要加空格来使代码更清晰、可读的地方；
+
+# 花括号的风格
 
 ### 三种基本风格
 
@@ -180,6 +282,43 @@
 
 ```
 
-所以，当你修改他人代码时，要嘛遵循现有风格，要嘛修改成统一风格（`Required`）。
+因此，修改他人代码时，需要遵循现有风格，或者修改成统一风格（`Required`）。
 
 ## 命名
+
+> "There are only two hard things in Computer Science: cache invalidation and naming things." - Phil Karlton
+
+良好、恰当的命名会让我们写代码就像写流畅的英文句子，可读性佳，在阅读代码的时候就能容易地理解代码的作用（即句子所表达的意思）。
+
+在命名方面，Objective-C倾向使用完整的名称，这会使得写Objective-C代码就像是在写英文散文。
+
+### 文件命名
+
+| suffix | content  
+| ------ | -------- 
+| .h     | Header file, including Objective-C interface
+| .m     | Objective-C implementation
+| .mm    | Objective-C, mixed with C++ code
+| .c     | C source code
+| .cpp   | C++ souce code
+
+通常，文件名与相应的类名保持一致，比如AppDelegate.h。如果是Category，则使用+号连接Category的名称，如NSString+md5.h。
+
+### 类的命名
+
+类名首先要是一个名词，并且需要清楚地表达出这个类（或者类的实例）的作用。该名词以大写字母开头，采用驼峰命名法（大小写）分隔不同单词。
+
+今天在项目代码里发现有用动宾结构短语作为类名，比如一个Http请求类叫做GetConfigurationFile（GetConfigFileDataRequest可能更合适）。
+
+正常代码中的类名不需要（不建议）加前缀，当你决定为一个类名加上前缀，则说明这个类是可以作为单独的、封装良好的、可以复用的组件或者框架等基础服务（`Important`）.
+
+### 方法命名
+
+方法名称以小写字母开头，同样采用驼峰命名风格。在对一个方法进行命名时，需要保证读起来像一条句子（`Very Important`）。这点很重要，因为方法的名称（定义、实现、调用等）是一个应用程序源代码中最主要的成分。
+
+
+
+### 变量命名
+
+### 缩写命名
+
